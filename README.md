@@ -263,32 +263,4 @@ Compile-time configuration is enforced using preprocessor `#if`/`#elif`/`#else` 
 
 ---
 
-## ▶️ How to Run
 
-1. Install the **AVR-GCC toolchain** (`avr-gcc`, `avr-objcopy`, `avrdude`)
-2. Ensure all project files are in the correct folder structure (LIB, MCAL, HAL)
-3. Define `F_CPU` (e.g., `-DF_CPU=8000000UL`) for timing-dependent modules
-4. Build:
-
-```bash
-avr-gcc -mmcu=atmega32 -DF_CPU=8000000UL -Os -Wall \
-    -o firmware.elf \
-    main.c \
-    ITI_CAIRO_G1_MA_MCAL/DIO/DIO_Program.c \
-    ITI_CAIRO_G1_MA_MCAL/UART/UART_Program.c \
-    ITI_CAIRO_G1_MA_HAL/LCD/LCD_Program.c
-```
-
-5. Convert to hex:
-
-```bash
-avr-objcopy -O ihex -R .eeprom firmware.elf firmware.hex
-```
-
-6. Flash to the ATmega32:
-
-```bash
-avrdude -c usbasp -p m32 -U flash:w:firmware.hex:i
-```
-
-Run the main file: `main.c`
