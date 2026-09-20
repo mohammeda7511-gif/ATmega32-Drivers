@@ -86,7 +86,7 @@
 
 /*
  * ADC trigger mode options
- * 1- ADC_TRIGGER_FREE_RUNNING     -> Free Running mode (continuous conversion)                                 ADTS = 000
+ * 1- ADC_TRIGGER_FREE_RUNNING     -> Free Running mode (continuous conversion)                                  ADTS = 000
  * 2- ADC_TRIGGER_ANALOG_COMP      -> Trigger on Analog Comparator output change                                 ADTS = 001
  * 3- ADC_TRIGGER_EXT_INT0         -> Trigger on External Interrupt 0 (INT0 pin)                                 ADTS = 010
  * 4- ADC_TRIGGER_TIMER0_COMP      -> Trigger on Timer0 Compare Match (OCR0)                                     ADTS = 011
@@ -103,5 +103,7 @@
  * 2- ADC_INTERRUPT_DISABLE
  */
 #define ADC_INTERRUPT_STATUS    ADC_INTERRUPT_ENABLE
+
+#define ADC_COUNTOUT			ADC_WAIT_FOREVER
 
 #endif /* ITI_CAIRO_G1_MA_MCAL_ADC_ADC_CONFIG_H_ */

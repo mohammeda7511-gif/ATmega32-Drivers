@@ -8,8 +8,7 @@
 #ifndef ITI_CAIRO_G1_MA_MCAL_ADC_ADC_PRIVATE_H_
 #define ITI_CAIRO_G1_MA_MCAL_ADC_ADC_PRIVATE_H_
 
-#include "../../ITI_CAIRO_G1_MA_MCAL/DIO/DIO_Interface.h"
-#include "../../ITI_CAIRO_G1_MA_MCAL/DIO/DIO_Private.h"
+#include "../DIO/DIO_Interface.h"
 
 #define ADC_PORT				PORTA
 
@@ -50,7 +49,11 @@
 #define ADC_1_22_CHECK          30
 #define ADC_GND_CHECK           31
 
-#define ADC_CHANNEL_CLEAR		0x1F  // -> when ANDed with ADMUX will clear the mux pins
+#define ADC_CHANNEL_CLEAR		0xE0  // -> when ANDed with ADMUX will clear the mux pins
+#define ADC_PRESCALER_CLEAR		0xF8
+#define ADC_AUTO_TRIG_CLEAR		0x1F
+
+#define ADC_WAIT_FOREVER		0
 
 #define ADC_EXTERNAL            0
 #define ADC_INTERNAL_VCC        1

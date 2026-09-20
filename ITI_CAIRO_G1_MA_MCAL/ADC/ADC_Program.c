@@ -43,10 +43,13 @@ void ADC_Init()
 #endif
 
 	/*Prescalar*/
+
+	/* Clear the prescaler bits */
 	ADCSRA &= ADC_PRESCALAR_CLEAR;
+	/* Set the prescaler value */
 	ADCSRA |= ADC_PRESCALAR;
 
-	/*Check for ADC mode*/
+	/* Check for ADC mode */
 #if ADC_MODE == ADC_SINGLE_CONVERSION
 	CLR_BIT(ADCSRA, ADATE);
 
@@ -77,4 +80,110 @@ void ADC_Init()
 #else
  #error "Wrong initialization for \"ADC_INTERRUPT_STATUS\"."
 #endif
+}
+
+void ADC_OnlyStartConversion(u8 channel)
+{
+	ADMUX &= ADC_CHANNEL_CLEAR;
+	ADMUX |= channel;
+
+	SET_BIT(ADCSRA, ADSC);
+}
+
+u8 ADC_OnlyRead()
+{
+#if ADC_COUNTOUT != ADC_WAIT_FOREVER
+	volatile u16 ADC_Counter = 0;
+
+	while (GET_BIT(ADCSRA, ADSC) && ADC_Counter < ADC_COUNTOUT)
+	{
+		ADC_Counter++;
+	}
+
+	if(ADC_Counter < ADC_COUNTOUT)
+	{
+#if ADC_ADJUST_RESULT == ADC_RIGHT
+		return ADC;
+
+#elif ADC_ADJUST_RESULT == ADC_LEFT
+		return ADC_HIGH
+#endif
+	}
+	else
+	{
+		return 0;
+	}
+#else
+	/* Waiting until the conversion is complete */
+	while (GET_BIT(ADCSRA, ADSC));
+
+	/* Return the 10 bits in any adjust mode */
+	#if   ADC_ADJUST_RESULT == ADC_RIGHT
+
+		/* Return the 10 bits */
+		return ADC_DATA;
+
+	#elif ADC_ADJUST_RESULT == ADC_LEFT
+
+		/* Return the 8 bits */
+		return ADC_HIGH;
+
+	#endif
+
+#endif
+}
+
+u16 ADC_Read10Bits(u8 channel)
+{
+	ADC_OnlyStartConversion(channel);
+#if ADC_ADJUST_RESULT == ADC_RIGHT
+	return ADC_OnlyRead();
+
+#elif ADC_ADJUST_RESULT == ADC_LEFT
+	return (ADC_OnlyRead() << 2);
+#endif
+}
+
+u8 ADC_Read8Bits(u8 channel)
+{
+	ADC_OnlyStartConversion(channel);
+#if ADC_ADJUST_RESULT == ADC_RIGHT
+	return (ADC_OnlyRead() >> 2);
+
+#elif ADC_ADJUST_RESULT == ADC_LEFT
+	return ADC_OnlyRead();
+
+#endif
+}
+
+void ADC_Enable()
+{
+	SET_BIT(ADCSRA, ADEN);
+}
+
+void ADC_Disable()
+{
+	CLR_BIT(ADCSRA, ADEN);
+}
+
+void ADC_AutoTriggerEnable()
+{
+	SFIOR &= ADC_AUTO_TRIG_CLEAR;
+	SFIOR |= ADC_TRIG_MODE;
+	SET_BIT(ADCSRA, ADATE);
+}
+
+void ADC_AutoTriggerDisable()
+{
+	CLR_BIT(ADCSRA, ADATE);
+}
+
+void ADC_InterruptEnable()
+{
+	SET_BIT(ADCSRA, ADIE);
+}
+
+void ADC_InterruptDisable()
+{
+	CLR_BIT(ADCSRA, ADIE);
 }
